@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import field %}
+{% block title %}Entrar · {{ app_name }}{% endblock %}
+{% block public_content %}
+<div class="auth-page"><div class="auth-panel"><div class="brand center"><div class="brand-mark large">TF</div><div><strong>{{ app_name }}</strong><span>Gestão acadêmica</span></div></div><h1>Entrar</h1><p class="muted">Acesse com seu usuário/e-mail e senha.</p><form method="post" autocomplete="off">{{ form.hidden_tag() }}{{ field(form.identifier) }}{{ field(form.password) }}{{ form.submit(class_='button primary full') }}</form><a class="text-link" href="{{ url_for('auth.password_recovery') }}">Esqueci minha senha</a></div></div>
+{% endblock %}

@@ -1,0 +1,2 @@
+TéoFac Acadêmico — migrations Alembic/Flask-Migrate.
+Use `flask --app run:app db upgrade` para aplicar a versão mais recente.

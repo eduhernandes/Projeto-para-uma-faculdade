@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+{% if current_user %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">TF</div><div><strong>{{ app_name }}</strong><span>Gestão acadêmica</span></div></div>
+    <nav class="nav">
+      <a href="{{ url_for('main.dashboard') }}">Painel</a>
+      {% if current_user.role == 'admin' %}
+        <div class="nav-label">Administração</div>
+        <a href="{{ url_for('admin.students') }}">Alunos</a>
+        <a href="{{ url_for('admin.teachers') }}">Professores</a>
+        <a href="{{ url_for('admin.courses') }}">Cursos</a>
+        <a href="{{ url_for('admin.subjects') }}">Disciplinas</a>
+        <a href="{{ url_for('admin.semesters') }}">Períodos</a>
+        <a href="{{ url_for('admin.classes') }}">Turmas</a>
+        <a href="{{ url_for('admin.calendar') }}">Calendário</a>
+        <a href="{{ url_for('admin.users') }}">Usuários</a>
+        <a href="{{ url_for('admin.permissions') }}">Permissões</a>
+        <a href="{{ url_for('admin.reports') }}">Relatórios</a>
+        <a href="{{ url_for('admin.academic_records') }}">Registros acadêmicos</a>
+        <a href="{{ url_for('admin.audit') }}">Auditoria</a>
+      {% elif current_user.role == 'teacher' %}
+        <div class="nav-label">Professor</div>
+        <a href="{{ url_for('teacher.classes') }}">Minhas turmas</a>
+        <a href="{{ url_for('teacher.calendar') }}">Calendário</a>
+      {% elif current_user.role == 'student' %}
+        <div class="nav-label">Aluno</div>
+        <a href="{{ url_for('student.academic') }}">Vida acadêmica</a>
+        <a href="{{ url_for('student.history') }}">Histórico</a>
+        <a href="{{ url_for('student.schedule') }}">Horário</a>
+        <a href="{{ url_for('student.calendar') }}">Calendário</a>
+        <a href="{{ url_for('student.profile') }}">Meu perfil</a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer"><div class="user-mini"><div class="avatar">{{ current_user.full_name[:1]|upper }}</div><div><strong>{{ current_user.full_name }}</strong><span>{{ current_user.role|capitalize }}</span></div></div><form method="post" action="{{ url_for('auth.logout') }}">{{ csrf_token() }}<button class="button ghost full" type="submit">Sair</button></form></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar"><button class="icon-button mobile-only" type="button" data-sidebar-toggle>☰</button><div><span class="eyebrow">{{ current_user.role|upper }}</span><h1>{% block page_title %}Painel{% endblock %}</h1></div><div class="topbar-user">{{ current_user.email }}</div></header>
+    <section class="page-body">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</div>
+{% else %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}<div class="public-flashes">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+{% endwith %}
+{% block public_content %}{% endblock %}
+{% endif %}
+</body>
+</html>

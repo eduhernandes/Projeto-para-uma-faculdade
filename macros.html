@@ -1,0 +1,14 @@
+{% macro field(f, cls='') %}
+<div class="form-group {{ cls }}">
+  {{ f.label }}
+  {{ f(class_='input' + (' is-invalid' if f.errors else '')) }}
+  {% for e in f.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+</div>
+{% endmacro %}
+{% macro select_field(f, cls='') %}
+<div class="form-group {{ cls }}">
+  {{ f.label }}
+  {{ f(class_='input' + (' is-invalid' if f.errors else '')) }}
+  {% for e in f.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+</div>
+{% endmacro %}

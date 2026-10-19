@@ -5,27 +5,8 @@ from flask import current_app
 from flask.cli import with_appcontext
 
 from .extensions import db
-from .models import Permission, User, Administrator, UserPermission
-from .services.permissions import DEFAULT_PERMISSIONS, PERMISSION_META
-
-
-def seed_permissions():
-    for code, (name, description) in PERMISSION_META.items():
-        item = Permission.query.filter_by(code=code).first()
-        if not item:
-            db.session.add(Permission(code=code, name=name, description=description))
-    db.session.commit()
-
-
-def grant_role_permissions(user):
-    seed_permissions()
-    codes = DEFAULT_PERMISSIONS.get(user.role, [])
-    permissions = {p.code: p for p in Permission.query.filter(Permission.code.in_(codes)).all()}
-    for code in codes:
-        permission = permissions.get(code)
-        if permission and not UserPermission.query.filter_by(user_id=user.id, permission_id=permission.id).first():
-            db.session.add(UserPermission(user_id=user.id, permission_id=permission.id))
-    db.session.commit()
+from .models import Administrator, User
+from .services.permissions import seed_permissions
 
 
 def register_commands(app):

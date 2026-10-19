@@ -13,7 +13,7 @@ class User(db.Model):
     is_active=db.Column(db.Boolean,nullable=False,default=True,index=True); session_version=db.Column(db.String(64),nullable=False,default='1')
     __table_args__=(db.CheckConstraint("role IN ('admin','teacher','student')",name='ck_users_role'),)
     last_login_at=db.Column(db.DateTime(timezone=True)); created_at=db.Column(db.DateTime(timezone=True),nullable=False,default=utcnow); updated_at=db.Column(db.DateTime(timezone=True),nullable=False,default=utcnow,onupdate=utcnow)
-    student=db.relationship('Student',back_populates='user',uselist=False,cascade='all, delete-orphan'); teacher=db.relationship('Teacher',back_populates='user',uselist=False,cascade='all, delete-orphan'); administrator=db.relationship('Administrator',back_populates='user',uselist=False,cascade='all, delete-orphan'); permissions=db.relationship('UserPermission',back_populates='user',cascade='all, delete-orphan')
+    student=db.relationship('Student',back_populates='user',uselist=False,cascade='all, delete-orphan'); teacher=db.relationship('Teacher',back_populates='user',uselist=False,cascade='all, delete-orphan'); administrator=db.relationship('Administrator',back_populates='user',uselist=False,cascade='all, delete-orphan'); permissions=db.relationship('UserPermission',foreign_keys='UserPermission.user_id',back_populates='user',cascade='all, delete-orphan')
     def has_permission(self,code): return self.role=='admin' or any(p.permission.code==code for p in self.permissions)
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method="scrypt")

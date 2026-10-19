@@ -1,3 +1,7 @@
+from ..extensions import db
+from ..models import Permission, UserPermission
+
+
 DEFAULT_PERMISSIONS = {
     "admin": [
         "admin.dashboard", "students.manage", "teachers.manage", "courses.manage", "subjects.manage",
@@ -30,3 +34,27 @@ PERMISSION_META = {
     "student.academic.view": ("Aluno: vida acadêmica", "Visualizar notas, médias e frequência próprias."),
     "student.calendar.view": ("Aluno: calendário", "Visualizar calendário acadêmico relacionado às próprias matrículas."),
 }
+
+
+def seed_permissions():
+    for code, (name, description) in PERMISSION_META.items():
+        item = Permission.query.filter_by(code=code).first()
+        if not item:
+            db.session.add(Permission(code=code, name=name, description=description))
+    db.session.commit()
+
+
+def grant_role_permissions(user):
+    seed_permissions()
+    codes = DEFAULT_PERMISSIONS.get(user.role, [])
+    permissions = {
+        permission.code: permission
+        for permission in Permission.query.filter(Permission.code.in_(codes)).all()
+    }
+    for code in codes:
+        permission = permissions.get(code)
+        if permission and not UserPermission.query.filter_by(
+            user_id=user.id, permission_id=permission.id
+        ).first():
+            db.session.add(UserPermission(user_id=user.id, permission_id=permission.id))
+    db.session.commit()

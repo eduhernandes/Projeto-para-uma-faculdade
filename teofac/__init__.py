@@ -5,6 +5,7 @@ from flask import Flask, render_template, g, request
 from .config import get_config
 from .extensions import csrf, db, limiter, migrate
 
+
 def create_app(config_name=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(get_config(config_name or os.getenv("FLASK_ENV", "development")))

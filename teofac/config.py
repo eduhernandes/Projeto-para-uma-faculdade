@@ -35,6 +35,9 @@ class TestingConfig(BaseConfig):
     RATELIMIT_ENABLED = False
     SECRET_KEY = secrets.token_hex(32)
 
+class TestDatabaseConfig(TestingConfig):
+    SQLALCHEMY_DATABASE_URI = "sqlite:///test_teologia.db"
+
 class ProductionConfig(BaseConfig):
     SECRET_KEY = os.getenv("SECRET_KEY")
     SESSION_COOKIE_NAME = "__Host-teofac_session"
@@ -48,7 +51,12 @@ class ProductionConfig(BaseConfig):
             raise RuntimeError("SECRET_KEY deve ter pelo menos 32 caracteres em produção.")
 
 def get_config(name):
-    config = {"development": DevelopmentConfig, "testing": TestingConfig, "production": ProductionConfig}.get(name.lower(), DevelopmentConfig)
+    config = {
+        "development": DevelopmentConfig,
+        "testing": TestingConfig,
+        "testdb": TestDatabaseConfig,
+        "production": ProductionConfig,
+    }.get(name.lower(), DevelopmentConfig)
     if config is ProductionConfig:
         config.validate()
     return config

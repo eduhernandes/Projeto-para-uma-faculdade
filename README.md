@@ -76,6 +76,39 @@ Para uma inicialização rápida sem migration existente, também existe:
 flask --app run:app init-db
 ```
 
+### Banco de teste populado
+
+Crie ou atualize o banco SQLite local com dados de demonstração:
+
+```bash
+python init_test_db.py
+```
+
+O script usa uma configuração isolada e grava em `instance/test_teologia.db`, sem alterar o banco principal configurado em `.env`. Pode ser executado novamente sem duplicar os registros de demonstração. O arquivo do banco é local e está excluído do Git.
+
+Para iniciar a aplicação usando esse banco no PowerShell:
+
+```powershell
+$env:FLASK_ENV = "testdb"
+flask --app run:app run --debug
+```
+
+Para voltar ao banco definido no `.env`, feche o servidor e remova a variável na sessão atual:
+
+```powershell
+Remove-Item Env:FLASK_ENV
+```
+
+Contas de demonstração:
+
+| Perfil | Usuário | Senha |
+|---|---|---|
+| Administrador | `admin.demo` | `AdminDemo!2026` |
+| Professor | `professor.demo` | `ProfessorDemo!2026` |
+| Aluno | `aluno.demo` | `AlunoDemo!2026` |
+
+Essas credenciais são apenas para desenvolvimento local; não as reutilize em produção.
+
 ## 6. Criar o primeiro administrador
 
 Não existe senha administrativa fixa no código. Crie o administrador interativamente:
@@ -186,6 +219,12 @@ teologia_academico/
     ├── blueprints/
     ├── services/
     ├── templates/
+    │   ├── admin/
+    │   ├── auth/
+    │   ├── dashboards/
+    │   ├── errors/
+    │   ├── student/
+    │   └── teacher/
     └── static/
 ```
 
